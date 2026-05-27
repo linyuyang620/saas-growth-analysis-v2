@@ -4,12 +4,20 @@
 --
 -- definitions (kept consistent across this file):
 --   eligible  = registered at least 30 days before max(activity_date)
---   activated = >= 3 activities in first 7 days
---   retained  = any activity in days 1..30
+--   activated = >= 3 activities in first 7 days  (the activation window)
+--   retained  = any activity in days 8..30       (POST-activation retention)
 --   paid      = current plan_type <> 'Free'
 --   renewed   = >= 2 successful payments
 --               (subscription table has no renewal_count column;
 --                this is the standard equivalent)
+--
+-- Why "retained = days 8..30" and not "days 1..30":
+--   If we used 1..30, any user activated (>=3 events in week 1) would trivially
+--   satisfy "any activity in 1..30" → Activated → Retained = 100% by construction,
+--   which is not a real conversion. Using 8..30 makes Retained measure
+--   "did the user actually come back after the activation burst?".
+--   Note: the standalone D30 retention metric in section 3 still uses 1..30
+--   (the general rolling-D30 metric); only the funnel uses 8..30.
 --
 -- creates 4 Tableau views at the bottom
 
@@ -330,7 +338,7 @@ flags AS (
              AND a.activity_date >= e.register_date
              AND a.activity_date <= e.register_date + INTERVAL 7 DAY) >= 3 AS is_activated,
            EXISTS (SELECT 1 FROM activity a WHERE a.user_id = e.user_id
-                    AND a.activity_date >  e.register_date
+                    AND a.activity_date >  e.register_date + INTERVAL 7  DAY
                     AND a.activity_date <= e.register_date + INTERVAL 30 DAY) AS is_retained,
            (e.plan_type <> 'Free') AS is_paid,
            (SELECT COUNT(*) FROM subscription s WHERE s.user_id = e.user_id
@@ -377,7 +385,7 @@ flags AS (
              AND a.activity_date >= e.register_date
              AND a.activity_date <= e.register_date + INTERVAL 7 DAY) >= 3 AS is_activated,
            EXISTS (SELECT 1 FROM activity a WHERE a.user_id = e.user_id
-                    AND a.activity_date >  e.register_date
+                    AND a.activity_date >  e.register_date + INTERVAL 7  DAY
                     AND a.activity_date <= e.register_date + INTERVAL 30 DAY) AS is_retained,
            (e.plan_type <> 'Free') AS is_paid,
            (SELECT COUNT(*) FROM subscription s WHERE s.user_id = e.user_id

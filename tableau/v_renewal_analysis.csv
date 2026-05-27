@@ -1,9 +1,0 @@
-segment_type,segment,paying_users,renewed_users,renewal_pct,avg_payments
-overall,all,2739,1312,47.9,2.91
-channel,Organic,910,439,48.24,3.2
-channel,Social Media,797,373,46.8,3.0
-channel,Google Ads,776,382,49.23,2.72
-channel,Email,256,118,46.09,2.22
-plan,Enterprise,493,143,29.01,2.12
-plan,Basic,1344,759,56.47,3.07
-plan,Pro,902,410,45.45,3.11

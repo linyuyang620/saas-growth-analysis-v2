@@ -27,23 +27,40 @@ Python (pandas / numpy) 做数据生成 · DuckDB 做本地分析仓库 · SQL �
 
 ```
 saas-growth-analysis/
-├── data/                CSV 数据 + DuckDB 数据库
+├── data/                CSV + DuckDB 数据库（由脚本生成，不入 git）
 ├── python/              数据生成 / 导入 / 导出脚本
 ├── sql/                 4 个分析模块（增长 / 留存 / 收入 / 漏斗）
-├── tableau/             导出给 Tableau Public 用的 CSV
+├── tableau/             供 Tableau 使用的 CSV（由脚本生成，不入 git）
+├── docs/                项目文档（数据字典 / 指标定义 / 看板搭建指南）
 └── README.md
 ```
 
 三张事实表：`users`（用户主数据）· `activity`（行为日志）· `subscription`（订阅付费）。
+完整字段说明见 [`docs/data_dictionary.md`](docs/data_dictionary.md)。
 
 ## 快速运行
 
 ```bash
-pip install pandas numpy duckdb
+pip install -r requirements.txt
+```
 
-python python/generate_data.py        # 生成 CSV
-python python/load_to_duckdb.py       # 导入 DuckDB
-python python/export_views_to_csv.py  # 导出视图给 Tableau
+项目按以下顺序运行——每一步依赖前一步的产物：
+
+```bash
+# 1. 生成模拟数据 (CSV → data/)
+python python/generate_data.py
+
+# 2. CSV 导入 DuckDB + 完整性校验
+python python/load_to_duckdb.py
+
+# 3. 运行 SQL 分析（任选其一）：
+duckdb data/saas_analysis.duckdb < sql/01_user_growth_analysis.sql
+# 或在 Python 里：
+#   con = duckdb.connect('data/saas_analysis.duckdb')
+#   con.execute(open('sql/01_user_growth_analysis.sql').read())
+
+# 4. 导出 9 个 BI 视图为 CSV（供 Tableau 等使用）
+python python/export_views_to_csv.py
 ```
 
 ## 分析模块
@@ -55,8 +72,9 @@ python python/export_views_to_csv.py  # 导出视图给 Tableau
 | 收入分析 | 钱从哪儿来，能否持续？ | MRR / ARR, ARPU / ARPPU, 收入集中度 |
 | 漏斗分析 | 在哪一步流失最多？ | 注册 → 激活 → 留存 → 付费 → 续费 |
 
-每个模块的 SQL 按"先看整体指标 → 再按维度切片 → 最后落成 Tableau 可用的视图"组织，
-文件末尾会写一段简短的结论小结。
+每个模块的 SQL 按"先看整体指标 → 再按维度切片 → 最后落成 Tableau 可用的视图"组织。
+所有指标的精确口径、计算公式、以及与真实业务实现的差异说明，见
+[`docs/metric_definitions.md`](docs/metric_definitions.md)。
 
 ## 主要发现
 
@@ -95,17 +113,34 @@ python python/export_views_to_csv.py  # 导出视图给 Tableau
 这一段也让我意识到：跑完 SQL 拿到数字以后，要先用业务常识做一次 sanity check，
 不能直接拿数据当结论。
 
-## Tableau 看板规划
+## Tableau 看板
 
-按 4 类受众规划了 4 个看板：
+**当前状态**：Tableau 视图数据已准备完成，看板规划和搭建指南已完成；
+**正式 Dashboard 截图 / Tableau Public 链接待补充。**
 
-- **Executive Overview** — MRR 趋势 + 漏斗 + 渠道 / 套餐收入占比
-- **Acquisition & Funnel** — 分渠道新增 + 5 段漏斗 + 渠道质量散点
-- **Engagement & Retention** — Cohort 热力图（核心）+ 分群留存对比
-- **Revenue & Customer Health** — MRR/ARR 趋势 + Pareto 集中度 + Top 客户
+已完成的部分：
 
-9 个 BI 视图已经从 DuckDB 导出到 `tableau/`，可直接连 Tableau Public；
-具体每张图用哪张视图，见 `tableau/_manifest.csv`。
+- 9 个 BI 视图通过 `export_views_to_csv.py` 导出到 `tableau/`，可直接连 Tableau
+- 4 个看板的布局规划（按 4 类受众）和手把手搭建步骤见
+  [`docs/tableau_build_guide.md`](docs/tableau_build_guide.md)
+- 视图到看板的映射见 `tableau/_manifest.csv`
+
+按 4 类受众规划的 4 个看板：
+
+| 看板 | 受众 | 主要图表 |
+|---|---|---|
+| Executive Overview | CEO / 高管 | MRR 趋势 + 漏斗 + 渠道 / 套餐收入占比 |
+| Acquisition & Funnel | Growth / Marketing | 分渠道新增 + 5 段漏斗 + 渠道质量散点 |
+| Engagement & Retention | 产品团队 | Cohort 热力图（核心）+ 分群留存对比 |
+| Revenue & Customer Health | CFO / CS | MRR/ARR 趋势 + Pareto 集中度 + Top 客户 |
+
+> 实际搭建完成后，截图会放到 `docs/screenshots/`，并在此处更新 Tableau Public 链接。
+
+## 文档导航
+
+- [数据字典](docs/data_dictionary.md) — 三张表的字段、取值、业务含义
+- [指标定义](docs/metric_definitions.md) — DAU/WAU/MAU、Retention、MRR/ARPU、Funnel 等口径
+- [Tableau 搭建指南](docs/tableau_build_guide.md) — 4 个 Dashboard 的逐步搭建步骤
 
 ## 用到的主要 SQL 技术
 

@@ -2,10 +2,24 @@
 -- Tables: users, subscription
 -- DuckDB SQL
 --
--- MRR rules:
+-- MRR rules (current implementation):
 --   monthly sub  → counts amount in payment month
 --   annual sub   → spreads amount/12 across 12 months from payment month
 --   only payment_status = 'Success' is counted
+--
+-- IMPORTANT — what this is NOT:
+--   This project has no subscription-state table and no churn / downgrade /
+--   upgrade events. Annual subs are amortized over a full 12 months regardless
+--   of whether the user actually remains subscribed. So strictly speaking
+--   this is "recognized revenue monthly allocation", NOT "true MRR" driven
+--   by subscription state.
+--
+--   In a real business, MRR must be adjusted on the fly:
+--     cancel     → drop the user's MRR contribution from that period on
+--     downgrade  → subtract (old plan MRR - new plan MRR)
+--     upgrade    → add (new plan MRR - old plan MRR) as Expansion MRR
+--     new paid   → add as New MRR
+--   Standard reports split MRR into:  New + Expansion - Contraction - Churn
 --
 -- creates 3 Tableau views: v_mrr_trend, v_revenue_by_channel, v_revenue_by_plan
 

@@ -46,6 +46,14 @@ FROM flags;
 
 
 -- ---------- 2. cohort retention grid ----------
+--
+-- CAVEAT — cohort maturity:
+-- Recent cohorts have sparse / missing cells at high months_since_register
+-- because they haven't existed long enough (e.g. the 2025-H2 cohorts have
+-- no M12 data yet). Do NOT average retention_pct across cohorts without
+-- controlling for cohort age — you'd be averaging fully-observed cells
+-- with cells that don't exist yet, which mechanically pulls the number down.
+-- Safe comparisons: same-K-month across different cohorts, or whole rows.
 
 -- long format (used by the view at the bottom)
 WITH user_cohort AS (

@@ -1,3 +1,24 @@
+# ---------------------------------------------------------------
+# Project-specific: don't track generated data or private materials
+# ---------------------------------------------------------------
+
+# Generated data (re-creatable via python/generate_data.py)
+data/*.duckdb
+data/*.csv
+
+# Generated Tableau CSVs (re-creatable via python/export_views_to_csv.py)
+tableau/*.csv
+
+# Self-use / job-search materials (not for public repo)
+private_notes/
+
+# macOS noise
+.DS_Store
+
+# ---------------------------------------------------------------
+# Python defaults
+# ---------------------------------------------------------------
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
