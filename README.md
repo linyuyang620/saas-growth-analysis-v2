@@ -3,6 +3,34 @@
 围绕一家虚拟的 SaaS 设计协作工具，做了一遍完整的经营数据分析：
 从数据建模开始，到 SQL 写各类指标，再到 Tableau 看板规划。
 
+## Dashboards
+
+> 以下为本地 Tableau Desktop 搭建并截图的看板，暂未发布到 Tableau Public。
+> 当前已完成 2 个看板，另外 2 个为后续补充项。
+
+### Dashboard 1 — Executive Overview （已完成）
+
+面向高管的整体经营概览：MRR 趋势 + 漏斗 + 渠道 / 套餐收入占比。
+
+![Dashboard 1: Executive Overview](docs/screenshots/d1_executive_overview.png)
+
+### Dashboard 3 — Retention Analysis （已完成）
+
+面向产品团队的留存分析：Cohort 热力图（核心）+ 分群留存对比。
+
+![Dashboard 3: Retention Analysis](docs/screenshots/d3_retention.png)
+
+#### Cohort 留存热力图（特写）
+
+![Cohort Retention Heatmap](docs/screenshots/cohort_heatmap_closeup.png)
+
+### 后续补充
+
+- **Dashboard 2 — Acquisition & Funnel**：分渠道新增 + 5 段漏斗 + 渠道质量散点（计划中）
+- **Dashboard 4 — Revenue & Customer Health**：MRR/ARR 趋势 + Pareto 集中度 + Top 客户（计划中）
+
+4 个看板的完整布局规划和搭建步骤见 [`docs/tableau_build_guide.md`](docs/tableau_build_guide.md)。
+
 ## 项目背景
 
 最近在系统学 SaaS / PLG 方向的经营分析方法，看了一些公开框架（Reforge、Lenny's Newsletter 这一类），
@@ -113,28 +141,24 @@ python python/export_views_to_csv.py
 这一段也让我意识到：跑完 SQL 拿到数字以后，要先用业务常识做一次 sanity check，
 不能直接拿数据当结论。
 
-## Tableau 看板
+## Tableau 看板（完整规划）
 
-**当前状态**：Tableau 视图数据已准备完成，看板规划和搭建指南已完成；
-**正式 Dashboard 截图 / Tableau Public 链接待补充。**
+截图见本 README 顶部 Dashboards 区。下表是 4 个看板的完整规划，已完成 2 个，
+另外 2 个为后续补充项。
 
-已完成的部分：
+| 看板 | 受众 | 主要图表 | 状态 |
+|---|---|---|---|
+| Executive Overview | CEO / 高管 | MRR 趋势 + 漏斗 + 渠道 / 套餐收入占比 | ✅ 已完成（本地 Tableau） |
+| Acquisition & Funnel | Growth / Marketing | 分渠道新增 + 5 段漏斗 + 渠道质量散点 | 计划中 |
+| Engagement & Retention | 产品团队 | Cohort 热力图（核心）+ 分群留存对比 | ✅ 已完成（本地 Tableau） |
+| Revenue & Customer Health | CFO / CS | MRR/ARR 趋势 + Pareto 集中度 + Top 客户 | 计划中 |
+
+**说明：**
 
 - 9 个 BI 视图通过 `export_views_to_csv.py` 导出到 `tableau/`，可直接连 Tableau
-- 4 个看板的布局规划（按 4 类受众）和手把手搭建步骤见
-  [`docs/tableau_build_guide.md`](docs/tableau_build_guide.md)
+- 4 个看板的布局规划和手把手搭建步骤见 [`docs/tableau_build_guide.md`](docs/tableau_build_guide.md)
 - 视图到看板的映射见 `tableau/_manifest.csv`
-
-按 4 类受众规划的 4 个看板：
-
-| 看板 | 受众 | 主要图表 |
-|---|---|---|
-| Executive Overview | CEO / 高管 | MRR 趋势 + 漏斗 + 渠道 / 套餐收入占比 |
-| Acquisition & Funnel | Growth / Marketing | 分渠道新增 + 5 段漏斗 + 渠道质量散点 |
-| Engagement & Retention | 产品团队 | Cohort 热力图（核心）+ 分群留存对比 |
-| Revenue & Customer Health | CFO / CS | MRR/ARR 趋势 + Pareto 集中度 + Top 客户 |
-
-> 实际搭建完成后，截图会放到 `docs/screenshots/`，并在此处更新 Tableau Public 链接。
+- 当前展示的截图都来自本地 Tableau Desktop；暂未发布到 Tableau Public
 
 ## 文档导航
 
@@ -150,7 +174,8 @@ python python/export_views_to_csv.py
 
 - [x] 数据建模 + 4 个分析模块 SQL
 - [x] BI 视图 + Tableau CSV 导出
-- [ ] 在 Tableau 里把 4 个看板搭出来
+- [x] Dashboard 1 (Executive Overview) + Dashboard 3 (Retention) 本地搭建 + 截图
+- [ ] Dashboard 2 (Acquisition & Funnel) + Dashboard 4 (Revenue & Customer Health)
 - [ ] 用 Jupyter 补一份探索性数据分析（matplotlib）
 - [ ] 试着用 dbt 重写视图，加上数据测试
 
