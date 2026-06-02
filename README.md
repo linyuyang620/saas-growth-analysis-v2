@@ -26,8 +26,8 @@
 
 ### 后续补充
 
-- **Dashboard 2 — Acquisition & Funnel**：分渠道新增 + 5 段漏斗 + 渠道质量散点（计划中）
-- **Dashboard 4 — Revenue & Customer Health**：MRR/ARR 趋势 + Pareto 集中度 + Top 客户（计划中）
+- **Dashboard 2 — Acquisition & Funnel**：分渠道新增 + 5 段漏斗 + 渠道质量散点（🔜 Roadmap）
+- **Dashboard 4 — Revenue & Customer Health**：MRR/ARR 趋势 + Pareto 集中度 + Top 客户（🔜 Roadmap）
 
 4 个看板的完整布局规划和搭建步骤见 [`docs/tableau_build_guide.md`](docs/tableau_build_guide.md)。
 
@@ -104,6 +104,22 @@ python python/export_views_to_csv.py
 所有指标的精确口径、计算公式、以及与真实业务实现的差异说明，见
 [`docs/metric_definitions.md`](docs/metric_definitions.md)。
 
+## 关键结果
+
+> 数据可复现：`generate_data.py` 固定随机种子 `seed=42`，5500 用户、约 5.9 万条行为、8 千余条订阅。
+
+| 维度 | 关键数字 | 业务含义 |
+|---|---|---|
+| 漏斗最大瓶颈 | 注册 → 激活仅 **40.7%** | 约六成新用户从未激活，onboarding 优化 ROI 高于继续投流 |
+| 激活的价值 | 激活组 8–30 天留存显著高于未激活组 | 印证 PLG「激活才是真正的北极星」 |
+| 收入集中度 | Enterprise 贡献 **56.8%** 收入（仅 506 个用户） | 典型 ToB 集中结构，大客户是收入命脉 |
+| 续费风险 | Enterprise 续费率最低（**29%**），Basic 最高（**56%**） | 大客户收入高但黏性最弱，是续费风险点 |
+| 渠道质量 | Organic 最优 / Email 最差（激活率仅 **20%**） | 市场预算应向自然流量倾斜，Email 渠道需复盘 ROI |
+| 商业化效率 | ARPPU $271 vs ARPU $138 | Free 用户拉低整体效率，看付费效率应用 ARPPU |
+
+> 说明：本项目为个人模拟数据集，价值在于完整的分析方法论与口径严谨性，而非数字绝对值。
+> 部分指标（如 MRR）受 schema 限制为近似口径，详见 [`docs/metric_definitions.md`](docs/metric_definitions.md)。
+
 ## 主要发现
 
 - **激活是 SaaS 漏斗里最关键的一步。** 把"首周 ≥ 3 次活动"作为激活阈值之后，
@@ -149,9 +165,9 @@ python python/export_views_to_csv.py
 | 看板 | 受众 | 主要图表 | 状态 |
 |---|---|---|---|
 | Executive Overview | CEO / 高管 | MRR 趋势 + 漏斗 + 渠道 / 套餐收入占比 | ✅ 已完成（本地 Tableau） |
-| Acquisition & Funnel | Growth / Marketing | 分渠道新增 + 5 段漏斗 + 渠道质量散点 | 计划中 |
+| Acquisition & Funnel | Growth / Marketing | 分渠道新增 + 5 段漏斗 + 渠道质量散点 | 🔜 Roadmap |
 | Engagement & Retention | 产品团队 | Cohort 热力图（核心）+ 分群留存对比 | ✅ 已完成（本地 Tableau） |
-| Revenue & Customer Health | CFO / CS | MRR/ARR 趋势 + Pareto 集中度 + Top 客户 | 计划中 |
+| Revenue & Customer Health | CFO / CS | MRR/ARR 趋势 + Pareto 集中度 + Top 客户 | 🔜 Roadmap |
 
 **说明：**
 
